@@ -1,28 +1,45 @@
 // client/src/App.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:4000'); // Adjust the URL if needed
+const socket = io('http://localhost:4000'); // Connect to your Socket.IO server
 
-function App() {
-  const [message, setMessage] = useState('');
+const ChatComponent = () => {
+    const [messages, setMessages] = useState([]);
+    const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    socket.on('twitchMessage', (msg) => {
-      setMessage(msg);
-    });
+    useEffect(() => {
+        socket.on('twitchMessage', (newMessage) => {
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+        });
 
-    return () => {
-      socket.off('message');
+        return () => {
+            socket.off('twitchMessage');
+        };
+    }, []);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
-  }, []);
 
-  return (
-    <div>
-      <b>most recent chat:</b>
-      <p>{message}</p>
-    </div>
-  );
-}
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
-export default App;
+    return (
+        <div className="chat-container">
+            <h1>Chat History</h1>
+            <div className="chat-box">
+                <ul className="message-list">
+                    {messages.map((message, index) => (
+                        <li key={index}>{message}</li>
+                    ))}
+                    {/* Ref element to ensure auto-scroll to bottom */}
+                    <div ref={messagesEndRef} />
+                </ul>
+            </div>
+        </div>
+    );
+};
+
+export default ChatComponent;
