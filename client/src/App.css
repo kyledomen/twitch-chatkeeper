@@ -1,0 +1,15 @@
+/* src/App.css */
+.App {
+  text-align: center;
+  margin-top: 50px;
+}
+
+h1 {
+  color: #282c34;
+}
+
+p {
+  font-size: 18px;
+  color: #61dafb;
+}
+
