@@ -8,7 +8,7 @@ function App() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    socket.on('message', (msg) => {
+    socket.on('twitchMessage', (msg) => {
       setMessage(msg);
     });
 
@@ -17,18 +17,12 @@ function App() {
     };
   }, []);
 
-  const sendMessage = () => {
-    socket.emit('message', 'Hello from React!');
-  };
-
   return (
     <div>
-      <h1>Socket.IO React Example</h1>
-      <p>Received Message: {message}</p>
-      <button onClick={sendMessage}>Send Message</button>
+      <b>most recent chat:</b>
+      <p>{message}</p>
     </div>
   );
 }
 
 export default App;
-
