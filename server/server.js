@@ -1,6 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
+const mongoose = require('mongoose');
 const initializeSocket = require('./socket');
 const {listenForMessages} = require('./twitch');
 
@@ -15,6 +17,17 @@ app.use(cors({
 app.get('/', (req, res) => {
     res.send('hello from server');
 });
+
+/*
+mongoose.connect('mongodb+srv://kdomen:<db_password>@chatcluster.jcnl5.mongodb.net/?retryWrites=true&w=majority&appName=ChatCluster', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error(err));
+
+mongoose.connect('');
+*/
 
 const io = initializeSocket(server);
 
