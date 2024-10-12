@@ -1,25 +1,24 @@
-/* src/App.css */
 .App {
   text-align: center;
   margin-top: 50px;
 }
 
 .chat-container {
-    width: '100%',
-    height: '100%',
-},
+    width: 100%;
+    height: 100%;
+}
 
 .chat-box {
-    height: '300px',
-    overflowY: 'auto',
-    border: '1px solid #ccc',
-    padding: '10px',
-    backgroundColor: '#f9f9f9',
-},
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
 
 .message-list {
-    listStyleType: 'none',
-    padding: 0,
+    list-style-type: none;
+    padding: 0;
 }
 
 h1 {
