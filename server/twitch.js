@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const tmi = require('tmi.js');
 
 const twitchOpts = {
@@ -8,7 +6,7 @@ const twitchOpts = {
         password: process.env.TWITCH_OAUTH_TOKEN
     },
     channels: [
-        'Atrioc'
+        'chessbrah'
     ]
 };
 
@@ -20,9 +18,6 @@ const listenForMessages = (io) => {
         if (self) return;
         const chatMessage = `${tags['display-name']}: ${message}`;
         console.log(chatMessage);
-        console.log(channel);
-        console.log(tags);
-        console.log(message);
         io.emit('twitchMessage', chatMessage);
     });
 };
