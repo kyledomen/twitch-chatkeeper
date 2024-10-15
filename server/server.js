@@ -5,6 +5,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const initializeSocket = require('./socket');
 const {listenForMessages} = require('./twitch');
+const Message = require('./models/Message');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,9 +19,26 @@ app.get('/', (req, res) => {
     res.send('hello from server');
 });
 
+app.get('/api/messages', async(req, res) => {
+    try {
+        const messages = await Message.find();
+        res.status(200).json(messages);
+    } catch (err) {
+        res.status(500).json({error: err.message});
+    }
+});
+
 mongoose.connect(process.env.MONGODB_CONN_STRING)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error(err));
+    .then(() => {
+        console.log('MongoDB connected');
+
+        Message.deleteMany({})
+            .then(() => {
+                console.log('Message collection cleared. Restarting database...');
+            })
+            .catch(err => console.log('Error cleaning messages: ', err));
+    })
+    .catch(err => console.error(err));
 
 
 const io = initializeSocket(server);

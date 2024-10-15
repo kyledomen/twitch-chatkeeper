@@ -1,4 +1,5 @@
 const tmi = require('tmi.js');
+const Message = require('./models/Message');
 
 const twitchOpts = {
     identity: {
@@ -6,7 +7,7 @@ const twitchOpts = {
         password: process.env.TWITCH_OAUTH_TOKEN
     },
     channels: [
-        'chessbrah'
+        'loltyler1'
     ]
 };
 
@@ -16,9 +17,23 @@ twitchClient.connect();
 const listenForMessages = (io) => {
     twitchClient.on('message', (channel, tags, message, self) => {
         if (self) return;
+
         const chatMessage = `${tags['display-name']}: ${message}`;
         console.log(chatMessage);
-        io.emit('twitchMessage', chatMessage);
+
+        const newMessage = new Message({
+            username: tags['display-name'],
+            message: message
+        });
+
+        newMessage.save()
+            .then(() => console.log('Message saved to database.'))
+            .catch(err => console.error(err));
+        
+        io.emit('twitchMessage', {
+            username: tags['display-name'],
+            message: message
+        });
     });
 };
 
