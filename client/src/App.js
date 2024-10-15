@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import axios from 'axios';
 import './App.css';
 
-const socket = io('http://localhost:4000'); // Connect to your Socket.IO server
+const socket = io('http://localhost:4000');
 
 const ChatComponent = () => {
     const [messages, setMessages] = useState([]);
