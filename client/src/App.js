@@ -11,9 +11,13 @@ const ChatComponent = () => {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
+        socket.on('channelName', (name) => {
+            const channelNameElement = document.getElementById('channel-name');
+            channelNameElement.innerText = `${name}'s chat`;
+        });
+
         axios.get('http://localhost:4000/api/messages')
             .then(response => {
-                console.log('Response data: ', response.data);
                 setMessages(response.data);
             })
             .catch(error => console.error('Error fetching messages; ', error));
@@ -23,6 +27,7 @@ const ChatComponent = () => {
         });
 
         return () => {
+            socket.off('channelName');
             socket.off('twitchMessage');
         };
     }, []);
@@ -37,7 +42,6 @@ const ChatComponent = () => {
 
     return (
         <div className="chat-container">
-            <h1>Chat History</h1>
             <div className="chat-box">
                 <ul className="message-list">
                     {messages.map((message, index) => (

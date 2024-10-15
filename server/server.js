@@ -4,15 +4,15 @@ const http = require('http');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const initializeSocket = require('./socket');
-const {listenForMessages} = require('./twitch');
+const {listenForConnections, connectToTwitch, listenForMessages} = require('./twitch');
 const Message = require('./models/Message');
 
 const app = express();
 const server = http.createServer(app);
 
-// CORS middleware
+// CORS middleware to make socket.io work
 app.use(cors({
-    origin: 'http://localhost:3000',     // The frontend React app
+    origin: 'http://localhost:3000',
 }));
 
 app.get('/', (req, res) => {
@@ -32,6 +32,11 @@ mongoose.connect(process.env.MONGODB_CONN_STRING)
     .then(() => {
         console.log('MongoDB connected');
 
+        const io = initializeSocket(server);
+        listenForConnections(io);
+        connectToTwitch(io);
+        listenForMessages(io);
+
         Message.deleteMany({})
             .then(() => {
                 console.log('Message collection cleared. Restarting database...');
@@ -40,10 +45,6 @@ mongoose.connect(process.env.MONGODB_CONN_STRING)
     })
     .catch(err => console.error(err));
 
-
-const io = initializeSocket(server);
-
-listenForMessages(io);
 
 // Start server on PORT 4000
 const PORT = process.env.PORT || 4000;

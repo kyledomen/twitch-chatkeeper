@@ -7,14 +7,28 @@ const twitchOpts = {
         password: process.env.TWITCH_OAUTH_TOKEN
     },
     channels: [
-        'loltyler1'
+        'Plup'
     ]
 };
 
 const twitchClient = new tmi.Client(twitchOpts);
-twitchClient.connect();
+
+const sendChannelName = (io) => {
+    const name = twitchOpts.channels[0];
+
+    // the channel names have a '#' in front of it for some reason
+    // emit the channel name without it
+    io.emit('channelName', name.substring(1, name.length));
+};
 
 const listenForMessages = (io) => {
+    twitchClient.on('connected', () => {
+        console.log('Connected to Twitch!');
+
+        // Emit the channel name after the Twitch client connects
+        io.emit('channelName', twitchOpts.channels[0]);
+    });
+
     twitchClient.on('message', (channel, tags, message, self) => {
         if (self) return;
 
@@ -27,7 +41,10 @@ const listenForMessages = (io) => {
         });
 
         newMessage.save()
-            .then(() => console.log('Message saved to database.'))
+            .then(() => {
+                console.log('Message saved to database.');
+                console.log();
+            })
             .catch(err => console.error(err));
         
         io.emit('twitchMessage', {
@@ -37,7 +54,25 @@ const listenForMessages = (io) => {
     });
 };
 
+const connectToTwitch = async (io) => {
+    try {
+        await twitchClient.connect();
+    } catch (error) {
+        console.error('Error connecting to Twitch:', error);
+    }
+};
+
+const listenForConnections = (io) => {
+    io.on('connection', (socket) => {
+        console.log('A client connected');
+        // Emit the channel name only when a client connects
+        sendChannelName(io);
+    });
+};
+
+
 module.exports = {
-    twitchClient,
+    listenForConnections,
+    connectToTwitch,
     listenForMessages
 };
