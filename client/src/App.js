@@ -9,6 +9,8 @@ const socket = io('http://localhost:4000'); // Connect to your Socket.IO server
 const ChatComponent = () => {
     const [messages, setMessages] = useState([]);
     const messagesEndRef = useRef(null);
+    const chatBoxRef = useRef(null);
+    const [isAtBottom, setIsAtBottom] = useState(true);
 
     useEffect(() => {
         socket.on('channelName', (name) => {
@@ -33,16 +35,28 @@ const ChatComponent = () => {
     }, []);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (isAtBottom) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
+    
+    const handleScroll = () => {
+        const chatBox = chatBoxRef.current;
+    
+        if (!chatBox) return;
+    
+        const atBottom = chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 1;
+        
+        setIsAtBottom(atBottom);
     };
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, scrollToBottom]);
 
     return (
         <div className="chat-container">
-            <div className="chat-box">
+            <div className="chat-box" ref={chatBoxRef} onScroll={handleScroll}>
                 <ul className="message-list">
                     {messages.map((message, index) => (
                         <li key={index}>
@@ -55,7 +69,6 @@ const ChatComponent = () => {
             </div>
         </div>
     );
-    
 };
 
 export default ChatComponent;
