@@ -7,7 +7,7 @@ const twitchOpts = {
         password: process.env.TWITCH_OAUTH_TOKEN
     },
     channels: [
-        'Plup'
+        'SmallAnt'
     ]
 };
 

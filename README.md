@@ -1,4 +1,4 @@
-# Twitch Chat-Keeper
+# Twitch Chatkeeper
 
 ## Description
 Allows for mobile Twitch viewers to view previous stream messages and keep up with chat, especially if something funny or noteworthy was said in chat.

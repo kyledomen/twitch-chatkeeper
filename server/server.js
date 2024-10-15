@@ -11,8 +11,18 @@ const app = express();
 const server = http.createServer(app);
 
 // CORS middleware to make socket.io work
+const allowedOrigins = ['http://localhost:3000', 'http://192.168.86.35:3000'];
+
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    }
 }));
 
 app.get('/', (req, res) => {
@@ -32,16 +42,18 @@ mongoose.connect(process.env.MONGODB_CONN_STRING)
     .then(() => {
         console.log('MongoDB connected');
 
+        // Clear the database
+        Message.deleteMany({})
+        .then(() => {
+            console.log('Message collection cleared. Restarting database...');
+            console.log();
+        })
+        .catch(err => console.log('Error cleaning messages: ', err));
+
         const io = initializeSocket(server);
         listenForConnections(io);
         connectToTwitch(io);
         listenForMessages(io);
-
-        Message.deleteMany({})
-            .then(() => {
-                console.log('Message collection cleared. Restarting database...');
-            })
-            .catch(err => console.log('Error cleaning messages: ', err));
     })
     .catch(err => console.error(err));
 
