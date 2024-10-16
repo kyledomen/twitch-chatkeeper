@@ -60,9 +60,10 @@ const ChatComponent = () => {
         <div className="chat-container">
             <div className="chat-box" ref={chatBoxRef} onScroll={handleScroll}>
                 <ul className="message-list">
-                    {messages.map((message, index) => (
+                    {messages.map((data, index) => (
                         <li key={index}>
-                            <strong>{message.username}:</strong> {message.message}
+                            <strong style={{ color: data.color }}>{data.username}:</strong>
+                            <span style={{ marginLeft: '5px' }}>{data.message}</span>
                         </li>
                     ))}
                     {/* Ref element to ensure auto-scroll to bottom */}
@@ -71,6 +72,7 @@ const ChatComponent = () => {
             </div>
         </div>
     );
+    
 };
 
 export default ChatComponent;
