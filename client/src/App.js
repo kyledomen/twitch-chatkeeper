@@ -1,5 +1,5 @@
 // client/src/App.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 import './App.css';
@@ -11,6 +11,13 @@ const ChatComponent = () => {
     const messagesEndRef = useRef(null);
     const chatBoxRef = useRef(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
+
+    // Memoize the scrollToBottom function to prevent re-definition on every render
+    const scrollToBottom = useCallback(() => {
+        if (isAtBottom) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [isAtBottom]);
 
     useEffect(() => {
         socket.on('channelName', (name) => {
@@ -34,25 +41,20 @@ const ChatComponent = () => {
         };
     }, []);
 
-    const scrollToBottom = () => {
-        if (isAtBottom) {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-    
+    // Handle scroll behavior
     const handleScroll = () => {
         const chatBox = chatBoxRef.current;
     
         if (!chatBox) return;
     
         const atBottom = chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 1;
-        
         setIsAtBottom(atBottom);
     };
 
+    // Auto-scroll when new messages are received, but only if the user is at the bottom
     useEffect(() => {
         scrollToBottom();
-    }, [messages, scrollToBottom]);
+    }, [messages, scrollToBottom]); // Add scrollToBottom in the dependency array
 
     return (
         <div className="chat-container">
