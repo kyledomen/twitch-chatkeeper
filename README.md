@@ -9,7 +9,7 @@ All I have to do is start the backend and it saves all messages that comes throu
 
 ## Features
 - Real-time chat viewing experience
-- Persistent message storage in the data
+- Persistent message storage\
 - Twitch API integration
 
 ## Technologies Used
