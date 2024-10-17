@@ -7,7 +7,7 @@ const twitchOpts = {
         password: process.env.TWITCH_OAUTH_TOKEN
     },
     channels: [
-        'SmallAnt'
+        'moistcr1tikal'
     ]
 };
 
@@ -37,7 +37,8 @@ const listenForMessages = (io) => {
 
         const newMessage = new Message({
             username: tags['display-name'],
-            message: message
+            message: message,
+            color: tags.color
         });
 
         newMessage.save()
@@ -49,7 +50,8 @@ const listenForMessages = (io) => {
         
         io.emit('twitchMessage', {
             username: tags['display-name'],
-            message: message
+            message: message,
+            color: tags.color
         });
     });
 };

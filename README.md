@@ -18,3 +18,6 @@ All I have to do is start the backend and it saves all messages that comes throu
 - React
 - Node.js
 - Socket.IO
+
+## Demo
+![twitch chatkeeper demo](./client/public/twitchchatkeepr.gif)
